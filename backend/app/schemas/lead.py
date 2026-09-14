@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+from app.schemas.freelancer import FreelancerResponse
 
 
 class ChatRequest(BaseModel):
@@ -13,3 +14,11 @@ class LeadInformation(BaseModel):
     budget: str | None = None
     customer_intent: str | None = None
     lead_priority: str | None = None
+
+class LeadMatchResponse(BaseModel):
+
+    message: str
+
+    lead: LeadInformation
+
+    matches: list[FreelancerResponse]
