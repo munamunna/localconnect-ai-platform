@@ -33,3 +33,15 @@ class FreelancerResponse(BaseModel):
     available: bool
 
     created_at: str | None = None
+
+
+class FreelancerMatchRequest(BaseModel):
+
+    service: str
+
+    location: str
+
+
+class FreelancerMatchResponse(BaseModel):
+
+    matches: list[FreelancerResponse]
