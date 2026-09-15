@@ -1,6 +1,11 @@
 from pydantic import BaseModel
 
 
+from datetime import datetime
+
+from pydantic import BaseModel
+
+
 class FreelancerCreate(BaseModel):
 
     name: str
@@ -32,7 +37,7 @@ class FreelancerResponse(BaseModel):
 
     available: bool
 
-    created_at: str | None = None
+    created_at: datetime | None = None
 
 
 class FreelancerMatchRequest(BaseModel):
