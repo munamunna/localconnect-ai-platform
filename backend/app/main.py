@@ -1,4 +1,12 @@
 from fastapi import FastAPI, HTTPException
+from app.schemas.freelancer import (
+    FreelancerCreate,
+    FreelancerResponse,
+)
+from app.services.freelancer_service import (
+    match_freelancers,
+    register_freelancer,
+)
 
 from app.schemas.lead import (
     ChatRequest,
@@ -142,4 +150,37 @@ def match_customer_lead(request: ChatRequest):
         raise HTTPException(
             status_code=500,
             detail=f"Lead matching failed: {str(exc)}",
+        )
+
+@app.post(
+    "/api/freelancers",
+    response_model=FreelancerResponse,
+    status_code=201,
+)
+def create_freelancer_profile(
+    request: FreelancerCreate,
+):
+    try:
+        freelancer = register_freelancer(
+            name=request.name,
+            service=request.service,
+            location=request.location,
+            phone=request.phone,
+        )
+
+        return {
+            "id": freelancer[0],
+            "name": freelancer[1],
+            "service": freelancer[2],
+            "location": freelancer[3],
+            "phone": freelancer[4],
+            "verified": freelancer[5],
+            "available": freelancer[6],
+            "created_at": freelancer[7],
+        }
+
+    except ValueError as exc:
+        raise HTTPException(
+            status_code=400,
+            detail=str(exc),
         )
