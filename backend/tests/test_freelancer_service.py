@@ -5,6 +5,7 @@ import pytest
 from app.services.freelancer_service import (
     match_freelancers,
     register_freelancer,
+    verify_freelancer_profile,
 )
 
 
@@ -168,3 +169,54 @@ def test_register_freelancer_strips_input():
         verified=False,
         available=True,
     )
+
+from unittest.mock import patch
+
+
+def test_verify_freelancer_profile():
+    fake_freelancer = (
+        1,
+        "Ahmed",
+        "electrician",
+        "Kozhikode",
+        "9876543210",
+        True,
+        True,
+        None,
+    )
+
+    with patch(
+        "app.services.freelancer_service.verify_freelancer",
+        return_value=fake_freelancer,
+    ) as mock_repository:
+        result = verify_freelancer_profile(1)
+
+    assert result == fake_freelancer
+    mock_repository.assert_called_once_with(1)
+
+
+def test_verify_freelancer_profile_rejects_invalid_id():
+    with patch(
+        "app.services.freelancer_service.verify_freelancer"
+    ) as mock_repository:
+        try:
+            verify_freelancer_profile(0)
+            assert False
+        except ValueError as exc:
+            assert str(exc) == "Invalid freelancer ID"
+
+        mock_repository.assert_not_called()
+
+
+def test_verify_freelancer_profile_freelancer_not_found():
+    with patch(
+        "app.services.freelancer_service.verify_freelancer",
+        return_value=None,
+    ) as mock_repository:
+        try:
+            verify_freelancer_profile(999)
+            assert False
+        except ValueError as exc:
+            assert str(exc) == "Freelancer not found"
+
+        mock_repository.assert_called_once_with(999)

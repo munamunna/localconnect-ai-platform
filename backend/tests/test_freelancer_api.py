@@ -223,3 +223,70 @@ def test_register_freelancer_without_phone():
         location="Kozhikode",
         phone=None,
     )
+
+from unittest.mock import patch
+
+
+def test_verify_freelancer_success():
+    fake_freelancer = (
+        1,
+        "Ahmed",
+        "electrician",
+        "Kozhikode",
+        "9876543210",
+        True,
+        True,
+        None,
+    )
+
+    with patch(
+        "app.main.verify_freelancer_profile",
+        return_value=fake_freelancer,
+    ) as mock_service:
+        response = client.post(
+            "/api/freelancers/1/verify"
+        )
+
+    assert response.status_code == 200
+
+    data = response.json()
+
+    assert data["id"] == 1
+    assert data["name"] == "Ahmed"
+    assert data["service"] == "electrician"
+    assert data["location"] == "Kozhikode"
+    assert data["verified"] is True
+    assert data["available"] is True
+
+    mock_service.assert_called_once_with(1)
+
+
+def test_verify_freelancer_invalid_id():
+    with patch(
+        "app.main.verify_freelancer_profile",
+        side_effect=ValueError("Invalid freelancer ID"),
+    ) as mock_service:
+        response = client.post(
+            "/api/freelancers/0/verify"
+        )
+
+    assert response.status_code == 400
+
+    assert response.json()["detail"] == "Invalid freelancer ID"
+
+    mock_service.assert_called_once_with(0)
+
+def test_verify_freelancer_not_found():
+    with patch(
+        "app.main.verify_freelancer_profile",
+        side_effect=ValueError("Freelancer not found"),
+    ) as mock_service:
+        response = client.post(
+            "/api/freelancers/999/verify"
+        )
+
+    assert response.status_code == 400
+
+    assert response.json()["detail"] == "Freelancer not found"
+
+    mock_service.assert_called_once_with(999)
