@@ -1,27 +1,26 @@
 from fastapi import FastAPI, HTTPException
 from app.schemas.freelancer import (
     FreelancerCreate,
+    FreelancerMatchRequest,
+    FreelancerMatchResponse,
     FreelancerResponse,
 )
 from app.services.freelancer_service import (
     match_freelancers,
     register_freelancer,
+    verify_freelancer_profile,
 )
 
 from app.schemas.lead import (
     ChatRequest,
     LeadMatchResponse,
 )
-from app.schemas.freelancer import (
-    FreelancerMatchRequest,
-    FreelancerMatchResponse,
-    FreelancerResponse,
-)
+
 from app.services.lead_service import extract_lead 
 from app.services.lead_matching_service import (
     match_lead_to_freelancers,
 )
-from app.services.freelancer_service import match_freelancers
+
 
 
 app = FastAPI(
@@ -167,6 +166,31 @@ def create_freelancer_profile(
             location=request.location,
             phone=request.phone,
         )
+
+        return {
+            "id": freelancer[0],
+            "name": freelancer[1],
+            "service": freelancer[2],
+            "location": freelancer[3],
+            "phone": freelancer[4],
+            "verified": freelancer[5],
+            "available": freelancer[6],
+            "created_at": freelancer[7],
+        }
+
+    except ValueError as exc:
+        raise HTTPException(
+            status_code=400,
+            detail=str(exc),
+        )
+
+@app.post(
+    "/api/freelancers/{freelancer_id}/verify",
+    response_model=FreelancerResponse,
+)
+def verify_freelancer_endpoint(freelancer_id: int):
+    try:
+        freelancer = verify_freelancer_profile(freelancer_id)
 
         return {
             "id": freelancer[0],

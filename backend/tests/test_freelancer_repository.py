@@ -2,6 +2,7 @@ from app.database.connection import get_connection
 from app.database.freelancer_repository import (
     create_freelancer,
     find_matching_freelancers,
+    verify_freelancer,
 )
 
 
@@ -144,5 +145,28 @@ def test_unverified_freelancer_is_not_returned():
     )
 
     assert results == []
+
+    cleanup_database()
+
+def test_verify_freelancer():
+    cleanup_database()
+
+    freelancer = create_freelancer(
+        name="Ahmed",
+        service="electrician",
+        location="Kozhikode",
+        phone="9876543210",
+        verified=False,
+        available=True,
+    )
+
+    freelancer_id = freelancer[0]
+
+    verified_freelancer = verify_freelancer(freelancer_id)
+
+    assert verified_freelancer is not None
+    assert verified_freelancer[0] == freelancer_id
+    assert verified_freelancer[1] == "Ahmed"
+    assert verified_freelancer[5] is True
 
     cleanup_database()
