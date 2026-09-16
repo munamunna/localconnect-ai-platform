@@ -1,5 +1,6 @@
 from fastapi import FastAPI, HTTPException
 from app.schemas.freelancer import (
+    FreelancerAvailabilityUpdate,
     FreelancerCreate,
     FreelancerMatchRequest,
     FreelancerMatchResponse,
@@ -191,6 +192,37 @@ def create_freelancer_profile(
 def verify_freelancer_endpoint(freelancer_id: int):
     try:
         freelancer = verify_freelancer_profile(freelancer_id)
+
+        return {
+            "id": freelancer[0],
+            "name": freelancer[1],
+            "service": freelancer[2],
+            "location": freelancer[3],
+            "phone": freelancer[4],
+            "verified": freelancer[5],
+            "available": freelancer[6],
+            "created_at": freelancer[7],
+        }
+
+    except ValueError as exc:
+        raise HTTPException(
+            status_code=400,
+            detail=str(exc),
+        )
+
+@app.patch(
+    "/api/freelancers/{freelancer_id}/availability",
+    response_model=FreelancerResponse,
+)
+def update_freelancer_availability_endpoint(
+    freelancer_id: int,
+    request: FreelancerAvailabilityUpdate,
+):
+    try:
+        freelancer = update_freelancer_availability_status(
+            freelancer_id=freelancer_id,
+            available=request.available,
+        )
 
         return {
             "id": freelancer[0],

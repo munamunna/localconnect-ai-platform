@@ -117,3 +117,42 @@ def verify_freelancer(freelancer_id: int):
 
     finally:
         connection.close()
+
+
+def update_freelancer_availability(
+    freelancer_id: int,
+    available: bool,
+):
+    connection = get_connection()
+
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute(
+                """
+                UPDATE freelancers
+                SET available = %s
+                WHERE id = %s
+                RETURNING
+                    id,
+                    name,
+                    service,
+                    location,
+                    phone,
+                    verified,
+                    available,
+                    created_at;
+                """,
+                (
+                    available,
+                    freelancer_id,
+                ),
+            )
+
+            freelancer = cursor.fetchone()
+
+        connection.commit()
+
+        return freelancer
+
+    finally:
+        connection.close()

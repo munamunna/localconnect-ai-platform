@@ -2,6 +2,7 @@ from app.database.freelancer_repository import (
     create_freelancer,
     find_matching_freelancers,
     verify_freelancer,
+    update_freelancer_availability,
 )
 
 def match_freelancers(
@@ -47,6 +48,24 @@ def verify_freelancer_profile(freelancer_id: int):
         raise ValueError("Invalid freelancer ID")
 
     freelancer = verify_freelancer(freelancer_id)
+
+    if freelancer is None:
+        raise ValueError("Freelancer not found")
+
+    return freelancer
+
+
+def update_freelancer_availability_status(
+    freelancer_id: int,
+    available: bool,
+):
+    if freelancer_id <= 0:
+        raise ValueError("Invalid freelancer ID")
+
+    freelancer = update_freelancer_availability(
+        freelancer_id=freelancer_id,
+        available=available,
+    )
 
     if freelancer is None:
         raise ValueError("Freelancer not found")
