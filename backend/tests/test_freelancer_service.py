@@ -6,6 +6,7 @@ from app.services.freelancer_service import (
     match_freelancers,
     register_freelancer,
     verify_freelancer_profile,
+    update_freelancer_availability_status,
 )
 
 
@@ -220,3 +221,69 @@ def test_verify_freelancer_profile_freelancer_not_found():
             assert str(exc) == "Freelancer not found"
 
         mock_repository.assert_called_once_with(999)
+
+
+def test_update_freelancer_availability_status():
+    fake_freelancer = (
+        1,
+        "Ahmed",
+        "electrician",
+        "Kozhikode",
+        "9876543210",
+        True,
+        False,
+        None,
+    )
+
+    with patch(
+        "app.services.freelancer_service.update_freelancer_availability",
+        return_value=fake_freelancer,
+    ) as mock_repository:
+        result = update_freelancer_availability_status(
+            freelancer_id=1,
+            available=False,
+        )
+
+    assert result == fake_freelancer
+    assert result[6] is False
+
+    mock_repository.assert_called_once_with(
+        freelancer_id=1,
+        available=False,
+    )
+
+
+def test_update_freelancer_availability_status_rejects_invalid_id():
+    with patch(
+        "app.services.freelancer_service.update_freelancer_availability"
+    ) as mock_repository:
+        try:
+            update_freelancer_availability_status(
+                freelancer_id=0,
+                available=False,
+            )
+            assert False
+        except ValueError as exc:
+            assert str(exc) == "Invalid freelancer ID"
+
+        mock_repository.assert_not_called()
+
+
+def test_update_freelancer_availability_status_freelancer_not_found():
+    with patch(
+        "app.services.freelancer_service.update_freelancer_availability",
+        return_value=None,
+    ) as mock_repository:
+        try:
+            update_freelancer_availability_status(
+                freelancer_id=999,
+                available=False,
+            )
+            assert False
+        except ValueError as exc:
+            assert str(exc) == "Freelancer not found"
+
+        mock_repository.assert_called_once_with(
+            freelancer_id=999,
+            available=False,
+        )

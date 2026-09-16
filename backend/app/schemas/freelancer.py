@@ -50,3 +50,6 @@ class FreelancerMatchRequest(BaseModel):
 class FreelancerMatchResponse(BaseModel):
 
     matches: list[FreelancerResponse]
+
+class FreelancerAvailabilityUpdate(BaseModel):
+    available: bool
