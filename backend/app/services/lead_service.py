@@ -1,5 +1,6 @@
 from app.llm.ollama_llm import generate_structured_response
 from app.schemas.lead import LeadInformation
+from app.database.lead_repository import create_lead
 
 
 def extract_lead(message: str) -> LeadInformation:
@@ -60,3 +61,20 @@ Expected:
     )
 
     return LeadInformation.model_validate_json(content)
+
+
+def save_lead(lead: LeadInformation):
+    if not lead.service and not lead.location:
+        raise ValueError(
+            "Cannot save lead without service or location"
+        )
+
+    return create_lead(
+        service=lead.service,
+        location=lead.location,
+        urgency=lead.urgency,
+        problem=lead.problem,
+        budget=lead.budget,
+        customer_intent=lead.customer_intent,
+        lead_priority=lead.lead_priority,
+    )

@@ -1,6 +1,9 @@
 from unittest.mock import MagicMock, patch
-
-from app.services.lead_service import extract_lead
+from app.schemas.lead import LeadInformation
+from app.services.lead_service import (
+    extract_lead,
+    save_lead,
+)
 import pytest
 from pydantic import ValidationError
 
@@ -123,3 +126,116 @@ def test_extract_lead_with_invalid_output():
             extract_lead(
                 "I need an electrician."
             )
+
+
+
+
+def test_save_lead():
+    lead = LeadInformation(
+        service="electrician",
+        location="Kozhikode",
+        urgency="tomorrow",
+        problem="wiring problem",
+        budget=None,
+        customer_intent="service_request",
+        lead_priority="high",
+    )
+
+    fake_saved_lead = (
+        1,
+        "electrician",
+        "Kozhikode",
+        "tomorrow",
+        "wiring problem",
+        None,
+        "service_request",
+        "high",
+        "NEW",
+        None,
+    )
+
+    with patch(
+        "app.services.lead_service.create_lead",
+        return_value=fake_saved_lead,
+    ) as mock_repository:
+        result = save_lead(lead)
+
+    assert result == fake_saved_lead
+
+    mock_repository.assert_called_once_with(
+        service="electrician",
+        location="Kozhikode",
+        urgency="tomorrow",
+        problem="wiring problem",
+        budget=None,
+        customer_intent="service_request",
+        lead_priority="high",
+    )
+
+
+def test_save_lead_requires_service_or_location():
+    lead = LeadInformation(
+        service=None,
+        location=None,
+        urgency=None,
+        problem=None,
+        budget=None,
+        customer_intent=None,
+        lead_priority=None,
+    )
+
+    with patch(
+        "app.services.lead_service.create_lead"
+    ) as mock_repository:
+        try:
+            save_lead(lead)
+            assert False
+        except ValueError as exc:
+            assert str(exc) == (
+                "Cannot save lead without service or location"
+            )
+
+        mock_repository.assert_not_called()
+
+
+def test_save_lead_allows_missing_location():
+    lead = LeadInformation(
+        service="electrician",
+        location=None,
+        urgency="tomorrow",
+        problem="wiring problem",
+        budget=None,
+        customer_intent="service_request",
+        lead_priority="high",
+    )
+
+    fake_saved_lead = (
+        1,
+        "electrician",
+        None,
+        "tomorrow",
+        "wiring problem",
+        None,
+        "service_request",
+        "high",
+        "NEW",
+        None,
+    )
+
+    with patch(
+        "app.services.lead_service.create_lead",
+        return_value=fake_saved_lead,
+    ) as mock_repository:
+        result = save_lead(lead)
+
+    assert result == fake_saved_lead
+
+    mock_repository.assert_called_once_with(
+        service="electrician",
+        location=None,
+        urgency="tomorrow",
+        problem="wiring problem",
+        budget=None,
+        customer_intent="service_request",
+        lead_priority="high",
+    )
