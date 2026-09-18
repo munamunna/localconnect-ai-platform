@@ -1,17 +1,39 @@
+import {
+  Routes,
+  Route,
+} from "react-router-dom";
+
+import AppLayout from "./layouts/AppLayout";
+import Home from "./pages/Home";
 import CustomerRequest from "./pages/CustomerRequest";
 import FreelancerRegistration from "./pages/FreelancerRegistration";
+import NotFound from "./pages/NotFound";
 
 function App() {
   return (
-    <div>
-      <h1>LocalConnect</h1>
+    <Routes>
+      <Route element={<AppLayout />}>
+        <Route
+          path="/"
+          element={<Home />}
+        />
 
-      <CustomerRequest />
+        <Route
+          path="/request"
+          element={<CustomerRequest />}
+        />
 
-      <hr />
+        <Route
+          path="/register"
+          element={<FreelancerRegistration />}
+        />
 
-      <FreelancerRegistration />
-    </div>
+        <Route
+          path="*"
+          element={<NotFound />}
+        />
+      </Route>
+    </Routes>
   );
 }
 
