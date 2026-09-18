@@ -1,4 +1,5 @@
 import CustomerRequest from "./pages/CustomerRequest";
+import FreelancerRegistration from "./pages/FreelancerRegistration";
 
 function App() {
   return (
@@ -6,6 +7,10 @@ function App() {
       <h1>LocalConnect</h1>
 
       <CustomerRequest />
+
+      <hr />
+
+      <FreelancerRegistration />
     </div>
   );
 }
