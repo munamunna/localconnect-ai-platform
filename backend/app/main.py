@@ -1,4 +1,5 @@
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from app.schemas.freelancer import (
     FreelancerAvailabilityUpdate,
     FreelancerCreate,
@@ -30,6 +31,14 @@ from app.services.lead_matching_service import (
 app = FastAPI(
     title="LocalConnect AI Platform",
     version="0.1.0",
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 
