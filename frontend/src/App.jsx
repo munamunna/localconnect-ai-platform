@@ -8,6 +8,7 @@ import Home from "./pages/Home";
 import CustomerRequest from "./pages/CustomerRequest";
 import FreelancerRegistration from "./pages/FreelancerRegistration";
 import NotFound from "./pages/NotFound";
+import FreelancerDiscovery from "./pages/freelancer-discovery/FreelancerDiscovery";
 
 function App() {
   return (
@@ -33,6 +34,11 @@ function App() {
           element={<NotFound />}
         />
       </Route>
+
+      <Route
+      path="/freelancers"
+      element={<FreelancerDiscovery />}
+      />
     </Routes>
   );
 }

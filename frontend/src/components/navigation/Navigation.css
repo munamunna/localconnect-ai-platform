@@ -1,0 +1,34 @@
+.navigation {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+  }
+  
+  .navigation a {
+    color: var(--color-text-secondary);
+  
+    font-size: 14px;
+    font-weight: 600;
+  
+    transition: color var(--transition-fast);
+  }
+  
+  .navigation a:hover {
+    color: var(--color-primary);
+  }
+  
+  .navigation a.active {
+    color: var(--color-primary);
+  }
+  
+  @media (max-width: 640px) {
+    .navigation {
+      width: 100%;
+      flex-wrap: wrap;
+      gap: 8px 16px;
+    }
+  
+    .navigation a {
+      font-size: 13px;
+    }
+  }

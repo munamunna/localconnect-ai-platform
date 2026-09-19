@@ -1,22 +1,23 @@
 import { NavLink } from "react-router-dom";
+import "./Navigation.css";
 
 function Navigation() {
   return (
-    <nav>
+    <nav className="navigation" aria-label="Main navigation">
       <NavLink to="/">
         Home
       </NavLink>
 
-      {" | "}
-
       <NavLink to="/request">
-        Find a Freelancer
+        Customer Request
       </NavLink>
 
-      {" | "}
+      <NavLink to="/freelancers">
+        Find Freelancers
+      </NavLink>
 
       <NavLink to="/register">
-        Register as a Freelancer
+        Register
       </NavLink>
     </nav>
   );

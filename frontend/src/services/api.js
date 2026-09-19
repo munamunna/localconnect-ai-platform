@@ -25,36 +25,64 @@ export async function extractLead(message) {
   return data;
 }
 
-
 export async function registerFreelancer({
-    name,
-    service,
-    location,
-    phone,
-  }) {
-    const response = await fetch(
-      `${API_BASE_URL}/api/freelancers`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name,
-          service,
-          location,
-          phone: phone || null,
-        }),
-      }
-    );
-  
-    const data = await response.json();
-  
-    if (!response.ok) {
-      throw new Error(
-        data.detail || "Failed to register freelancer"
-      );
+  name,
+  service,
+  location,
+  phone,
+}) {
+  const response = await fetch(
+    `${API_BASE_URL}/api/freelancers`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        name,
+        service,
+        location,
+        phone: phone || null,
+      }),
     }
-  
-    return data;
+  );
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(
+      data.detail || "Failed to register freelancer"
+    );
   }
+
+  return data;
+}
+
+export async function matchFreelancers({
+  service,
+  location,
+}) {
+  const response = await fetch(
+    `${API_BASE_URL}/api/freelancers/match`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        service,
+        location,
+      }),
+    }
+  );
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(
+      data.detail || "Failed to find matching freelancers"
+    );
+  }
+
+  return data;
+}
