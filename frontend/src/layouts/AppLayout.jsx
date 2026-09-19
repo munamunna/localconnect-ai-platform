@@ -1,16 +1,17 @@
-import { Outlet } from "react-router-dom";
-import Navigation from "../components/Navigation";
+import { Link, Outlet } from "react-router-dom";
+import Navigation from "../components/navigation/Navigation";
+import "./AppLayout.css";
 
 function AppLayout() {
   return (
-    <div>
-      <header>
-        <h1>LocalConnect</h1>
+    <div className="app-shell">
+      <header className="app-header">
+        <Link className="brand" to="/">
+          Local<span>Connect</span>
+        </Link>
 
         <Navigation />
       </header>
-
-      <hr />
 
       <main>
         <Outlet />

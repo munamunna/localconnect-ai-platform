@@ -1,0 +1,44 @@
+.empty-state {
+    max-width: 560px;
+  
+    margin: 0 auto;
+    padding: 60px 30px;
+  
+    text-align: center;
+  }
+  
+  .empty-state-icon {
+    width: 64px;
+    height: 64px;
+  
+    display: grid;
+    place-items: center;
+  
+    margin: 0 auto 20px;
+  
+    background: #eef2f7;
+    border-radius: 50%;
+  
+    font-size: 25px;
+  }
+  
+  .empty-state h2 {
+    margin-bottom: 10px;
+  
+    color: var(--color-text-primary);
+  
+    font-size: 24px;
+  }
+  
+  .empty-state p {
+    margin: 0 auto 10px;
+  
+    color: var(--color-text-secondary);
+  
+    line-height: 1.6;
+  }
+  
+  .empty-state span {
+    color: var(--color-text-muted);
+    font-size: 13px;
+  }
