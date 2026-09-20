@@ -5,20 +5,23 @@ from app.database.freelancer_repository import (
     update_freelancer_availability,
 )
 
-def match_freelancers(
-    service: str,
-    location: str,
-):
+from app.services.service_taxonomy import normalize_service
+
+
+def match_freelancers(service: str, location: str):
     if not service or not service.strip():
         raise ValueError("Service is required")
 
     if not location or not location.strip():
         raise ValueError("Location is required")
 
+    canonical_service = normalize_service(service)
+
     return find_matching_freelancers(
-        service=service.strip(),
+        service=canonical_service,
         location=location.strip(),
     )
+
 
 def register_freelancer(
     name: str,
@@ -35,14 +38,18 @@ def register_freelancer(
     if not location or not location.strip():
         raise ValueError("Location is required")
 
+    canonical_service = normalize_service(service)
+
     return create_freelancer(
         name=name.strip(),
-        service=service.strip(),
+        service=canonical_service,
         location=location.strip(),
         phone=phone.strip() if phone else None,
         verified=False,
         available=True,
     )
+
+
 def verify_freelancer_profile(freelancer_id: int):
     if freelancer_id <= 0:
         raise ValueError("Invalid freelancer ID")
