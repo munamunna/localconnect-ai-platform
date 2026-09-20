@@ -5,8 +5,8 @@ import pytest
 from app.services.freelancer_service import (
     match_freelancers,
     register_freelancer,
-    verify_freelancer_profile,
     update_freelancer_availability_status,
+    verify_freelancer_profile,
 )
 
 
@@ -37,12 +37,12 @@ def test_match_freelancers_success():
     assert result == expected
 
     mock_repository.assert_called_once_with(
-        service="Electrician",
+        service="electrical",
         location="Kozhikode",
     )
 
 
-def test_match_freelancers_missing_service():
+def test_match_freelancers_requires_service():
     with pytest.raises(
         ValueError,
         match="Service is required",
@@ -53,7 +53,7 @@ def test_match_freelancers_missing_service():
         )
 
 
-def test_match_freelancers_missing_location():
+def test_match_freelancers_requires_location():
     with pytest.raises(
         ValueError,
         match="Location is required",
@@ -92,7 +92,7 @@ def test_register_freelancer_success():
 
     mock_repository.assert_called_once_with(
         name="Rahul",
-        service="Electrician",
+        service="electrical",
         location="Kozhikode",
         phone="9999999999",
         verified=False,
@@ -127,7 +127,7 @@ def test_register_freelancer_without_phone():
 
     mock_repository.assert_called_once_with(
         name="Rahul",
-        service="Electrician",
+        service="electrical",
         location="Kozhikode",
         phone=None,
         verified=False,
@@ -135,7 +135,7 @@ def test_register_freelancer_without_phone():
     )
 
 
-def test_register_freelancer_invalid_name():
+def test_register_freelancer_requires_name():
     with pytest.raises(
         ValueError,
         match="Name is required",
@@ -147,7 +147,7 @@ def test_register_freelancer_invalid_name():
         )
 
 
-def test_register_freelancer_invalid_service():
+def test_register_freelancer_requires_service():
     with pytest.raises(
         ValueError,
         match="Service is required",
@@ -159,7 +159,7 @@ def test_register_freelancer_invalid_service():
         )
 
 
-def test_register_freelancer_invalid_location():
+def test_register_freelancer_requires_location():
     with pytest.raises(
         ValueError,
         match="Location is required",
@@ -195,7 +195,7 @@ def test_verify_freelancer_success():
     mock_repository.assert_called_once_with(1)
 
 
-def test_verify_freelancer_invalid_id():
+def test_verify_freelancer_requires_valid_id():
     with pytest.raises(
         ValueError,
         match="Invalid freelancer ID",
@@ -207,12 +207,15 @@ def test_verify_freelancer_not_found():
     with patch(
         "app.services.freelancer_service.verify_freelancer",
         return_value=None,
-    ):
+    ) as mock_repository:
+
         with pytest.raises(
             ValueError,
             match="Freelancer not found",
         ):
             verify_freelancer_profile(999)
+
+    mock_repository.assert_called_once_with(999)
 
 
 def test_update_freelancer_availability_success():
@@ -245,7 +248,7 @@ def test_update_freelancer_availability_success():
     )
 
 
-def test_update_freelancer_availability_invalid_id():
+def test_update_freelancer_availability_requires_valid_id():
     with pytest.raises(
         ValueError,
         match="Invalid freelancer ID",
@@ -260,7 +263,8 @@ def test_update_freelancer_availability_not_found():
     with patch(
         "app.services.freelancer_service.update_freelancer_availability",
         return_value=None,
-    ):
+    ) as mock_repository:
+
         with pytest.raises(
             ValueError,
             match="Freelancer not found",
@@ -269,3 +273,8 @@ def test_update_freelancer_availability_not_found():
                 freelancer_id=999,
                 available=False,
             )
+
+    mock_repository.assert_called_once_with(
+        freelancer_id=999,
+        available=False,
+    )
