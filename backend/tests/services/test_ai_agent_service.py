@@ -2,7 +2,10 @@ from unittest.mock import patch
 
 import pytest
 
-from app.schemas.agent import AgentCapability
+from app.schemas.agent import (
+    AgentCapability,
+    FreelancerSearchRequest,
+)
 from app.services.ai_agent_service import run_agent
 
 
@@ -32,19 +35,62 @@ def test_run_agent_uses_rag_for_rag_capability():
     )
 
 
-def test_run_agent_identifies_freelancer_search():
+def test_run_agent_uses_freelancer_search():
+    search_request = FreelancerSearchRequest(
+        service="Plumbing",
+        location="Kozhikode",
+    )
+
+    expected = [
+        (
+            1,
+            "Ahmed",
+            "Plumbing",
+            "Kozhikode",
+            "9876543210",
+            True,
+            True,
+            None,
+        )
+    ]
+
+    with patch(
+        "app.services.ai_agent_service.detect_capability",
+        return_value=AgentCapability.FREELANCER_SEARCH,
+    ) as mock_detect, patch(
+        "app.services.ai_agent_service.search_freelancers_from_request",
+        return_value=expected,
+    ) as mock_search:
+
+        result = run_agent(
+            query="Find a plumber in Kozhikode",
+            freelancer_search=search_request,
+        )
+
+    assert result == expected
+
+    mock_detect.assert_called_once_with(
+        "Find a plumber in Kozhikode",
+    )
+
+    mock_search.assert_called_once_with(
+        search_request,
+    )
+
+
+def test_run_agent_requires_freelancer_search_parameters():
     with patch(
         "app.services.ai_agent_service.detect_capability",
         return_value=AgentCapability.FREELANCER_SEARCH,
     ):
 
-        result = run_agent(
-            query="Find a plumber for me",
-        )
-
-    assert result == (
-        "Freelancer search capability is not implemented yet."
-    )
+        with pytest.raises(
+            ValueError,
+            match="Freelancer search parameters are required",
+        ):
+            run_agent(
+                query="Find a plumber in Kozhikode",
+            )
 
 
 def test_run_agent_identifies_lead_management():
