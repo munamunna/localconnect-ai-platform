@@ -5,6 +5,9 @@ from app.services.agent_freelancer_service import (
 from app.services.agent_parameter_service import (
     extract_freelancer_search_parameters,
 )
+from app.services.agent_response_service import (
+    format_freelancer_search_response,
+)
 from app.services.agent_router_service import detect_capability
 from app.services.rag_response_service import generate_rag_response
 
@@ -29,8 +32,12 @@ def run_agent(
             query
         )
 
-        return search_freelancers_from_request(
+        results = search_freelancers_from_request(
             search_request
+        )
+
+        return format_freelancer_search_response(
+            results
         )
 
     if capability == AgentCapability.LEAD_MANAGEMENT:
