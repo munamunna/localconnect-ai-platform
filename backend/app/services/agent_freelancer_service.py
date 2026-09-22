@@ -2,6 +2,8 @@ from app.schemas.agent import FreelancerSearchRequest
 from app.services.freelancer_service import match_freelancers
 from app.schemas.agent import FreelancerSearchRequest
 
+from app.services.service_taxonomy import normalize_service
+
 
 def search_freelancers(
     service: str,
@@ -13,8 +15,10 @@ def search_freelancers(
     if not location or not location.strip():
         raise ValueError("Location is required")
 
+    normalized_service = normalize_service(service)
+
     return match_freelancers(
-        service=service.strip(),
+        service=normalized_service,
         location=location.strip(),
     )
 
