@@ -42,3 +42,18 @@ def test_detect_capability_requires_non_whitespace_query():
         match="Query is required",
     ):
         detect_capability("   ")
+
+
+def test_detect_freelancer_search_with_find_me_wording():
+    result = detect_capability(
+        "Find me a plumber in Kozhikode"
+    )
+
+    assert result == AgentCapability.FREELANCER_SEARCH
+
+def test_detect_freelancer_search_with_unknown_service_name():
+    result = detect_capability(
+        "Find me a web and app freelancer in Payyoli"
+    )
+
+    assert result == AgentCapability.FREELANCER_SEARCH
