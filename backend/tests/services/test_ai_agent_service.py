@@ -35,9 +35,9 @@ def test_run_agent_uses_rag_for_rag_capability():
     )
 
 
-def test_run_agent_uses_freelancer_search():
+def test_run_agent_extracts_and_uses_freelancer_search_parameters():
     search_request = FreelancerSearchRequest(
-        service="Plumbing",
+        service="plumber",
         location="Kozhikode",
     )
 
@@ -58,13 +58,15 @@ def test_run_agent_uses_freelancer_search():
         "app.services.ai_agent_service.detect_capability",
         return_value=AgentCapability.FREELANCER_SEARCH,
     ) as mock_detect, patch(
+        "app.services.ai_agent_service.extract_freelancer_search_parameters",
+        return_value=search_request,
+    ) as mock_extract, patch(
         "app.services.ai_agent_service.search_freelancers_from_request",
         return_value=expected,
     ) as mock_search:
 
         result = run_agent(
             query="Find a plumber in Kozhikode",
-            freelancer_search=search_request,
         )
 
     assert result == expected
@@ -73,24 +75,13 @@ def test_run_agent_uses_freelancer_search():
         "Find a plumber in Kozhikode",
     )
 
+    mock_extract.assert_called_once_with(
+        "Find a plumber in Kozhikode",
+    )
+
     mock_search.assert_called_once_with(
         search_request,
     )
-
-
-def test_run_agent_requires_freelancer_search_parameters():
-    with patch(
-        "app.services.ai_agent_service.detect_capability",
-        return_value=AgentCapability.FREELANCER_SEARCH,
-    ):
-
-        with pytest.raises(
-            ValueError,
-            match="Freelancer search parameters are required",
-        ):
-            run_agent(
-                query="Find a plumber in Kozhikode",
-            )
 
 
 def test_run_agent_identifies_lead_management():
