@@ -32,10 +32,9 @@ def test_search_freelancers_success():
     assert result == expected
 
     mock_match.assert_called_once_with(
-        service="Plumbing",
+        service="plumbing",
         location="Kozhikode",
     )
-
 
 def test_search_freelancers_strips_input():
     with patch(
@@ -51,7 +50,7 @@ def test_search_freelancers_strips_input():
     assert result == []
 
     mock_match.assert_called_once_with(
-        service="Plumbing",
+        service="plumbing",
         location="Kozhikode",
     )
 
@@ -76,3 +75,19 @@ def test_search_freelancers_requires_location():
             service="Plumbing",
             location="",
         )
+
+def test_search_freelancers_normalizes_service():
+    with patch(
+        "app.services.agent_freelancer_service.match_freelancers",
+        return_value=[],
+    ) as mock_match:
+
+        search_freelancers(
+            service="web and app development",
+            location="Payyoli",
+        )
+
+    mock_match.assert_called_once_with(
+        service="web and app",
+        location="Payyoli",
+    )
