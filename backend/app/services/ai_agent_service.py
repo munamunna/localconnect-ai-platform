@@ -5,6 +5,9 @@ from app.services.agent_parameter_service import extract_freelancer_search_param
 from app.services.agent_response_service import format_freelancer_search_response
 from app.services.agent_router_service import detect_capability
 from app.services.rag_response_service import generate_rag_response
+from app.services.agent_lead_response_service import (
+    format_agent_lead_response,
+)
 
 
 def run_agent(query: str, limit: int = 5):
@@ -29,6 +32,7 @@ def run_agent(query: str, limit: int = 5):
         return format_freelancer_search_response(results)
 
     if capability == AgentCapability.LEAD_MANAGEMENT:
-        return create_lead_from_message(query)
+        lead = create_lead_from_message(query)
+        return format_agent_lead_response(lead)
 
     raise ValueError("Unsupported agent capability")
