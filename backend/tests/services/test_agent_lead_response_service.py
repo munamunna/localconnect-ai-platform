@@ -5,7 +5,7 @@ from app.services.agent_lead_response_service import (
 )
 
 
-def test_format_agent_lead_response():
+def test_format_agent_lead_response_with_matches():
     lead = LeadInformation(
         service="electrician",
         location="Kozhikode",
@@ -16,30 +16,101 @@ def test_format_agent_lead_response():
         lead_priority="high",
     )
 
-    result = format_agent_lead_response(lead)
+    matches = [
+        (
+            1,
+            "Ahmed",
+            "electrical",
+            "Kozhikode",
+            "9876543210",
+            True,
+            True,
+            None,
+        ),
+    ]
+
+    result = format_agent_lead_response(
+        lead=lead,
+        matches=matches,
+    )
 
     assert isinstance(result, AgentLeadResponse)
-    assert result.message == "Lead created successfully."
+    assert result.message == (
+        "Lead created successfully. "
+        "I found 1 matching freelancer."
+    )
+
     assert result.lead == lead
+    assert len(result.matches) == 1
+
+    assert result.matches[0].id == 1
+    assert result.matches[0].name == "Ahmed"
+    assert result.matches[0].service == "electrical"
+    assert result.matches[0].location == "Kozhikode"
+    assert result.matches[0].phone == "9876543210"
+    assert result.matches[0].verified is True
+    assert result.matches[0].available is True
 
 
-def test_format_agent_lead_response_preserves_lead_data():
+def test_format_agent_lead_response_without_matches():
     lead = LeadInformation(
         service="plumber",
         location="Kochi",
-        urgency="today",
-        problem="water leakage",
-        budget="AED 500",
-        customer_intent="service_request",
-        lead_priority="medium",
     )
 
-    result = format_agent_lead_response(lead)
+    result = format_agent_lead_response(
+        lead=lead,
+        matches=[],
+    )
 
-    assert result.lead.service == "plumber"
-    assert result.lead.location == "Kochi"
-    assert result.lead.urgency == "today"
-    assert result.lead.problem == "water leakage"
-    assert result.lead.budget == "AED 500"
-    assert result.lead.customer_intent == "service_request"
-    assert result.lead.lead_priority == "medium"
+    assert result.message == (
+        "Lead created successfully, "
+        "but no matching freelancers were found."
+    )
+
+    assert result.lead == lead
+    assert result.matches == []
+
+
+def test_format_agent_lead_response_with_multiple_matches():
+    lead = LeadInformation(
+        service="electrician",
+        location="Kozhikode",
+    )
+
+    matches = [
+        (
+            1,
+            "Ahmed",
+            "electrical",
+            "Kozhikode",
+            "9876543210",
+            True,
+            True,
+            None,
+        ),
+        (
+            2,
+            "Rahman",
+            "electrical",
+            "Kozhikode",
+            "9876543211",
+            True,
+            False,
+            None,
+        ),
+    ]
+
+    result = format_agent_lead_response(
+        lead=lead,
+        matches=matches,
+    )
+
+    assert result.message == (
+        "Lead created successfully. "
+        "I found 2 matching freelancers."
+    )
+
+    assert len(result.matches) == 2
+    assert result.matches[0].name == "Ahmed"
+    assert result.matches[1].name == "Rahman"
