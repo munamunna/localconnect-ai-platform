@@ -33,9 +33,9 @@ def test_create_lead_and_find_freelancers_success():
         "app.services.agent_lead_matching_service.create_lead_from_message",
         return_value=lead,
     ) as mock_create_lead, patch(
-        "app.services.agent_lead_matching_service.search_freelancers",
+        "app.services.agent_lead_matching_service.check_freelancer_availability",
         return_value=matches,
-    ) as mock_search:
+    ) as mock_check:
 
         result_lead, result_matches = (
             create_lead_and_find_freelancers(
@@ -50,7 +50,7 @@ def test_create_lead_and_find_freelancers_success():
         "I need an electrician in Kozhikode tomorrow."
     )
 
-    mock_search.assert_called_once_with(
+    mock_check.assert_called_once_with(
         service="electrician",
         location="Kozhikode",
     )
@@ -65,8 +65,8 @@ def test_create_lead_and_find_freelancers_without_service():
         "app.services.agent_lead_matching_service.create_lead_from_message",
         return_value=lead,
     ) as mock_create_lead, patch(
-        "app.services.agent_lead_matching_service.search_freelancers",
-    ) as mock_search:
+        "app.services.agent_lead_matching_service.check_freelancer_availability",
+    ) as mock_check:
 
         result_lead, result_matches = (
             create_lead_and_find_freelancers(
@@ -78,7 +78,7 @@ def test_create_lead_and_find_freelancers_without_service():
     assert result_matches == []
 
     mock_create_lead.assert_called_once()
-    mock_search.assert_not_called()
+    mock_check.assert_not_called()
 
 
 def test_create_lead_and_find_freelancers_without_location():
@@ -90,8 +90,8 @@ def test_create_lead_and_find_freelancers_without_location():
         "app.services.agent_lead_matching_service.create_lead_from_message",
         return_value=lead,
     ) as mock_create_lead, patch(
-        "app.services.agent_lead_matching_service.search_freelancers",
-    ) as mock_search:
+        "app.services.agent_lead_matching_service.check_freelancer_availability",
+    ) as mock_check:
 
         result_lead, result_matches = (
             create_lead_and_find_freelancers(
@@ -103,7 +103,7 @@ def test_create_lead_and_find_freelancers_without_location():
     assert result_matches == []
 
     mock_create_lead.assert_called_once()
-    mock_search.assert_not_called()
+    mock_check.assert_not_called()
 
 
 def test_create_lead_and_find_freelancers_rejects_empty_message():
