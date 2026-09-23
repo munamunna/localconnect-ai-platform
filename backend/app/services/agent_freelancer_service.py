@@ -1,6 +1,6 @@
 from app.schemas.agent import FreelancerSearchRequest
 from app.services.freelancer_service import match_freelancers
-from app.schemas.agent import FreelancerSearchRequest
+
 
 from app.services.service_taxonomy import normalize_service
 

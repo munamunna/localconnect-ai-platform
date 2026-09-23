@@ -41,9 +41,9 @@ def test_run_agent_identifies_lead_management():
         "app.services.ai_agent_service.detect_capability",
         return_value=AgentCapability.LEAD_MANAGEMENT,
     ), patch(
-        "app.services.ai_agent_service.create_lead_from_message",
-        return_value="lead-data",
-    ) as mock_create_lead, patch(
+        "app.services.ai_agent_service.create_lead_and_find_freelancers",
+        return_value=("lead-data", ["freelancer-data"]),
+    ) as mock_create_lead_and_match, patch(
         "app.services.ai_agent_service.format_agent_lead_response",
         return_value="formatted-response",
     ) as mock_format:
@@ -54,12 +54,13 @@ def test_run_agent_identifies_lead_management():
 
         assert result == "formatted-response"
 
-        mock_create_lead.assert_called_once_with(
+        mock_create_lead_and_match.assert_called_once_with(
             "Create a lead for this customer"
         )
 
         mock_format.assert_called_once_with(
-            "lead-data"
+            lead="lead-data",
+            matches=["freelancer-data"],
         )
 
 
