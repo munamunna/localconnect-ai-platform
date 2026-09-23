@@ -112,15 +112,19 @@ def test_run_agent_identifies_lead_management():
     with patch(
         "app.services.ai_agent_service.detect_capability",
         return_value=AgentCapability.LEAD_MANAGEMENT,
-    ):
+    ), patch(
+        "app.services.ai_agent_service.create_lead_from_message",
+        return_value="lead-created",
+    ) as mock_create_lead:
 
         result = run_agent(
             query="Create a lead for this customer",
         )
 
-    assert result == (
-        "Lead management capability is not implemented yet."
-    )
+        assert result == "lead-created"
+        mock_create_lead.assert_called_once_with(
+            "Create a lead for this customer"
+        )
 
 
 def test_run_agent_requires_query():
