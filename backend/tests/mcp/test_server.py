@@ -4,12 +4,10 @@ from app.mcp.server import mcp
 
 
 @pytest.mark.anyio
-async def test_health_check_tool_registered():
+async def test_mcp_tools_registered():
     tools = await mcp.list_tools()
 
-    assert len(tools) == 1
-    assert tools[0].name == "health_check"
-    assert (
-        tools[0].description
-        == "Check whether the LocalConnect MCP server is running."
-    )
+    tool_names = [tool.name for tool in tools]
+
+    assert "health_check" in tool_names
+    assert "search_freelancers_tool" in tool_names
