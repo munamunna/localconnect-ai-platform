@@ -1,16 +1,25 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api.routes import (
-    freelancers,
-    health,
-    leads,
-)
+
+
 
 
 app = FastAPI(
     title="LocalConnect AI Platform",
     version="0.1.0",
+)
+
+from app.api.routes import (
+    freelancers,
+    health,
+    leads,
+    agent
+)
+
+app.include_router(
+    agent.router,
+    prefix="/api/agent",
 )
 
 
